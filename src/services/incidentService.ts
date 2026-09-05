@@ -35,10 +35,10 @@ export const updateIncidentStatus = (
     if (inc.id !== id) return inc;
     if (inc.status === newStatus) return inc;
 
-    // Regra de Negócio Crítica: Critical não pode ir de Open direto para Resolved
-    if (inc.severity === 'Critical' && inc.status === 'Open' && newStatus === 'Resolved') {
+    // Regra de Negócio Crítica: Incidentes Critical e High não podem ir de Open direto para Resolved
+    if ((inc.severity === 'Critical' || inc.severity === 'High') && inc.status === 'Open' && newStatus === 'Resolved') {
       throw new InvalidStatusTransitionError(
-        'Um incidente com severidade Critical não pode passar diretamente de Open para Resolved. Altere primeiro para In Progress.'
+        `Um incidente com severidade ${inc.severity} não pode passar diretamente de Open para Resolved. Altere primeiro para In Progress.`
       );
     }
 

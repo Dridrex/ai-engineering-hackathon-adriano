@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
 import { Incident, Status, Severity } from './types/incident';
-import { getIncidents, saveIncidents } from './storage/incidentStorage';
-import { createIncident, updateIncidentStatus, calculateDashboardStats, InvalidStatusTransitionError } from './services/incidentService';
+import {
+  getIncidents,
+  saveIncidents,
+  getFormDraft,
+  saveFormDraft,
+  getUiState,
+  saveUiState,
+  resetToSeedData,
+  FormDraft,
+} from './storage/incidentStorage';
+import {
+  createIncident,
+  updateIncidentStatus,
+  calculateDashboardStats,
+  InvalidStatusTransitionError,
+} from './services/incidentService';
 import { Header } from './components/Header';
 import { DashboardStats } from './components/DashboardStats';
 import { IncidentFilter } from './components/IncidentFilter';
@@ -12,17 +26,35 @@ import { Notification } from './components/Notification';
 
 export const App: React.FC = () => {
   const [incidents, setIncidents] = useState<Incident[]>(getIncidents);
-  const [statusFilter, setStatusFilter] = useState<Status | 'All'>('All');
-  const [severityFilter, setSeverityFilter] = useState<Severity | 'All'>('All');
-
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [formDraft, setFormDraft] = useState<FormDraft>(getFormDraft);
+  const [uiState, setUiState] = useState(getUiState);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const selectedIncident = uiState.selectedIncidentId
+    ? incidents.find((i) => i.id === uiState.selectedIncidentId) || null
+    : null;
+
+  const updateDraft = (updated: Partial<FormDraft>) => {
+    setFormDraft((prev) => {
+      const next = { ...prev, ...updated };
+      saveFormDraft(next);
+      return next;
+    });
+  };
+
+  const updateUi = (updated: Partial<typeof uiState>) => {
+    setUiState((prev) => {
+      const next = { ...prev, ...updated };
+      saveUiState(next);
+      return next;
+    });
+  };
 
   const handleCreateIncident = (data: { title: string; description: string; severity: Severity; owner: string }) => {
     const updated = createIncident(incidents, data);
     setIncidents(updated);
     saveIncidents(updated);
+    updateDraft({ isOpen: false, title: '', description: '', severity: 'Medium', owner: '' });
   };
 
   const handleStatusChange = (id: string, newStatus: Status) => {
@@ -30,9 +62,6 @@ export const App: React.FC = () => {
       const updated = updateIncidentStatus(incidents, id, newStatus);
       setIncidents(updated);
       saveIncidents(updated);
-      if (selectedIncident && selectedIncident.id === id) {
-        setSelectedIncident(updated.find((i) => i.id === id) || null);
-      }
       setErrorMessage(null);
     } catch (error) {
       if (error instanceof InvalidStatusTransitionError) {
@@ -43,9 +72,19 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleResetData = () => {
+    if (window.confirm('Deseja restaurar os dados iniciais de exemplo (Ana, Bruno e Carla)?')) {
+      resetToSeedData();
+      setIncidents(getIncidents());
+      setFormDraft(getFormDraft());
+      setUiState(getUiState());
+      setErrorMessage(null);
+    }
+  };
+
   const filteredIncidents = incidents.filter((inc) => {
-    const matchesStatus = statusFilter === 'All' || inc.status === statusFilter;
-    const matchesSeverity = severityFilter === 'All' || inc.severity === severityFilter;
+    const matchesStatus = uiState.statusFilter === 'All' || inc.status === uiState.statusFilter;
+    const matchesSeverity = uiState.severityFilter === 'All' || inc.severity === uiState.severityFilter;
     return matchesStatus && matchesSeverity;
   });
 
@@ -53,30 +92,35 @@ export const App: React.FC = () => {
 
   return (
     <div className="container">
-      <Header onOpenNewModal={() => setIsFormOpen(true)} />
+      <Header
+        onOpenNewModal={() => updateDraft({ isOpen: true })}
+        onResetData={handleResetData}
+      />
       <DashboardStats stats={stats} />
 
       <IncidentFilter
-        statusFilter={statusFilter}
-        severityFilter={severityFilter}
-        onStatusChange={setStatusFilter}
-        onSeverityChange={setSeverityFilter}
+        statusFilter={uiState.statusFilter}
+        severityFilter={uiState.severityFilter}
+        onStatusChange={(statusFilter) => updateUi({ statusFilter })}
+        onSeverityChange={(severityFilter) => updateUi({ severityFilter })}
       />
 
       <IncidentList
         incidents={filteredIncidents}
-        onSelectIncident={(inc) => setSelectedIncident(inc)}
+        onSelectIncident={(inc) => updateUi({ selectedIncidentId: inc.id })}
       />
 
       <IncidentForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        isOpen={formDraft.isOpen}
+        draft={formDraft}
+        onClose={() => updateDraft({ isOpen: false })}
+        onDraftChange={updateDraft}
         onSubmit={handleCreateIncident}
       />
 
       <IncidentDetail
         incident={selectedIncident}
-        onClose={() => setSelectedIncident(null)}
+        onClose={() => updateUi({ selectedIncidentId: null })}
         onStatusChange={handleStatusChange}
       />
 

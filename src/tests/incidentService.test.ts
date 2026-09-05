@@ -31,7 +31,7 @@ describe('IncidentService & Business Rules Tests', () => {
     expect(incidents[0].owner).toBe('Diego');
   });
 
-  it('⚠️ DEVE IMPEDIR que incidente Critical passe direto de Open para Resolved', () => {
+  it('⚠️ DEVE IMPEDIR que incidente Critical ou High passe direto de Open para Resolved', () => {
     const criticalOpenIncident: Incident = {
       id: 'test-critical',
       title: 'Critical Outage',
@@ -44,11 +44,26 @@ describe('IncidentService & Business Rules Tests', () => {
       history: [],
     };
 
-    const list = [criticalOpenIncident];
+    const highOpenIncident: Incident = {
+      id: 'test-high',
+      title: 'High Outage',
+      description: 'System slow',
+      severity: 'High',
+      owner: 'Tester',
+      status: 'Open',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      history: [],
+    };
 
     // Tentativa inválida: Open -> Resolved para Critical
     expect(() => {
-      updateIncidentStatus(list, 'test-critical', 'Resolved');
+      updateIncidentStatus([criticalOpenIncident], 'test-critical', 'Resolved');
+    }).toThrowError(InvalidStatusTransitionError);
+
+    // Tentativa inválida: Open -> Resolved para High
+    expect(() => {
+      updateIncidentStatus([highOpenIncident], 'test-high', 'Resolved');
     }).toThrowError(InvalidStatusTransitionError);
   });
 

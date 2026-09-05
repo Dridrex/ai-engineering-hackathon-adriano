@@ -1,30 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Severity } from '../types/incident';
+import { FormDraft } from '../storage/incidentStorage';
 import { X, Check } from 'lucide-react';
 
 interface IncidentFormProps {
   isOpen: boolean;
+  draft: FormDraft;
   onClose: () => void;
+  onDraftChange: (updated: Partial<FormDraft>) => void;
   onSubmit: (data: { title: string; description: string; severity: Severity; owner: string }) => void;
 }
 
-export const IncidentForm: React.FC<IncidentFormProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [severity, setSeverity] = useState<Severity>('Medium');
-  const [owner, setOwner] = useState('');
-
+export const IncidentForm: React.FC<IncidentFormProps> = ({
+  isOpen,
+  draft,
+  onClose,
+  onDraftChange,
+  onSubmit,
+}) => {
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim() || !owner.trim()) return;
-    onSubmit({ title: title.trim(), description: description.trim(), severity, owner: owner.trim() });
-    setTitle('');
-    setDescription('');
-    setSeverity('Medium');
-    setOwner('');
-    onClose();
+    if (!draft.title.trim() || !draft.description.trim() || !draft.owner.trim()) return;
+    onSubmit({
+      title: draft.title.trim(),
+      description: draft.description.trim(),
+      severity: draft.severity,
+      owner: draft.owner.trim(),
+    });
   };
 
   const inputStyle = {
@@ -52,18 +56,36 @@ export const IncidentForm: React.FC<IncidentFormProps> = ({ isOpen, onClose, onS
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Título *</label>
-            <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Payment API instability" style={inputStyle} />
+            <input
+              type="text"
+              required
+              value={draft.title}
+              onChange={(e) => onDraftChange({ title: e.target.value })}
+              placeholder="Ex: Payment API instability"
+              style={inputStyle}
+            />
           </div>
 
           <div>
             <label style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Descrição *</label>
-            <textarea required rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descreva o problema e impacto operacional..." style={inputStyle} />
+            <textarea
+              required
+              rows={3}
+              value={draft.description}
+              onChange={(e) => onDraftChange({ description: e.target.value })}
+              placeholder="Descreva o problema e impacto operacional..."
+              style={inputStyle}
+            />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Severidade *</label>
-              <select value={severity} onChange={(e) => setSeverity(e.target.value as Severity)} style={inputStyle}>
+              <select
+                value={draft.severity}
+                onChange={(e) => onDraftChange({ severity: e.target.value as Severity })}
+                style={inputStyle}
+              >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -73,7 +95,14 @@ export const IncidentForm: React.FC<IncidentFormProps> = ({ isOpen, onClose, onS
 
             <div>
               <label style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Responsável *</label>
-              <input type="text" required value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Ex: Ana" style={inputStyle} />
+              <input
+                type="text"
+                required
+                value={draft.owner}
+                onChange={(e) => onDraftChange({ owner: e.target.value })}
+                placeholder="Ex: Ana"
+                style={inputStyle}
+              />
             </div>
           </div>
 
