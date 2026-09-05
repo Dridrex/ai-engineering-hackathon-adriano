@@ -42,6 +42,18 @@ npm test
 
 ---
 
+## 🌐 Deploy de Produção (Vercel)
+
+A aplicação está configurada para deploy de **1 clique com Custo R$ 0,00** na Vercel através do arquivo de infraestrutura como código [`vercel.json`](file:///d:/desafio%20convem/vercel.json).
+
+### Como Publicar na Vercel:
+1. Acesse [vercel.com/new](https://vercel.com/new) e faça login com sua conta do GitHub.
+2. Importe o repositório **`Dridrex/ai-engineering-hackathon-adriano`**.
+3. O Preset `Vite` e o diretório `dist` serão detectados automaticamente.
+4. Clique em **Deploy**.
+
+---
+
 ## 🏗️ Arquitetura da Solução
 * **Frontend**: React 18 + TypeScript + Vite.
 * **Estilização**: Vanilla CSS com Design Tokens (Dark Mode nativo, Glassmorphism, Layout Responsivo).
