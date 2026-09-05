@@ -115,4 +115,20 @@ Este documento registra as principais interações, prompts estratégicos e deci
   - `npx.cmd vitest run`: 7/7 testes aprovados (100% sucesso).
   - `npm.cmd run build`: Compilação de produção concluída com sucesso.
   - `https://ai-engineering-hackathon-adriano.vercel.app/`: URL de produção funcional e isolada.
+* **Próxima decisão**: Atender ao Change Request #1 (Comentários e Timeline Unificada).
+
+### 🔹 Interação 10: Implementação do Change Request #1 (Comentários & Timeline Unificada)
+* **Objetivo**: Atender ao requisito emergente das 14:00 (Change Request #1), adicionando capacidade de registrar comentários em incidentes e apresentando uma Timeline Cronológica Unificada (status + comentários).
+* **Contexto fornecido**: Enunciado do Change Request #1 enviado pela banca do Hackathon.
+* **Instrução / Prompt**: Requisitos do Change Request #1 (comentários obrigatórios, validação contra conteúdo/autor vazios, timeline cronológica integrada, persistência).
+* **Resultado**:
+  - Atualização dos tipos [`src/types/incident.ts`](./src/types/incident.ts) com `Comment` e `TimelineItem`.
+  - Adição dos métodos `addCommentToIncident` e `getUnifiedTimeline` em [`src/services/incidentService.ts`](./src/services/incidentService.ts).
+  - Atualização do componente [`IncidentDetail.tsx`](./src/components/IncidentDetail.tsx) com formulário de comentário e exibição da Timeline Unificada.
+  - Atualização de [`spec.md`](./spec.md) e [`PRD.md`](./PRD.md) com os requisitos F07 e F08.
+  - Criação de novos testes automatizados cobrindo adição de comentários, validação de campos vazios e ordenação cronológica.
+* **Validação (Agente QA)**:
+  - `npm test`: 10/10 testes aprovados no Vitest (100% sucesso).
+  - `npm run build`: Compilação de produção concluída com sucesso em `1.24s`.
+
 

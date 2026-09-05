@@ -1,9 +1,16 @@
-import { Incident, Severity, Status, DashboardStats, HistoryEntry } from '../types/incident';
+import { Incident, Severity, Status, DashboardStats, HistoryEntry, Comment, TimelineItem } from '../types/incident';
 
 export class InvalidStatusTransitionError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'InvalidStatusTransitionError';
+  }
+}
+
+export class InvalidCommentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidCommentError';
   }
 }
 
@@ -22,6 +29,7 @@ export const createIncident = (
     createdAt: now,
     updatedAt: now,
     history: [],
+    comments: [],
   };
   return [newIncident, ...incidents];
 };
@@ -67,6 +75,66 @@ export const updateIncidentStatus = (
       history: [historyEntry, ...inc.history],
     };
   });
+};
+
+export const addCommentToIncident = (
+  incidents: Incident[],
+  id: string,
+  author: string,
+  content: string
+): Incident[] => {
+  const trimmedAuthor = author.trim();
+  const trimmedContent = content.trim();
+
+  if (!trimmedAuthor) {
+    throw new InvalidCommentError('O autor do comentário é obrigatório.');
+  }
+
+  if (!trimmedContent) {
+    throw new InvalidCommentError('O conteúdo do comentário não pode estar vazio.');
+  }
+
+  const now = new Date().toISOString();
+  const newComment: Comment = {
+    id: `c-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+    author: trimmedAuthor,
+    content: trimmedContent,
+    createdAt: now,
+  };
+
+  return incidents.map((inc) => {
+    if (inc.id !== id) return inc;
+    const currentComments = inc.comments || [];
+    return {
+      ...inc,
+      updatedAt: now,
+      comments: [newComment, ...currentComments],
+    };
+  });
+};
+
+export const getUnifiedTimeline = (incident: Incident): TimelineItem[] => {
+  const historyItems: TimelineItem[] = (incident.history || []).map((h) => ({
+    id: h.id,
+    type: 'status_change',
+    timestamp: h.timestamp,
+    fromStatus: h.fromStatus,
+    toStatus: h.toStatus,
+    resolutionNotes: h.resolutionNotes,
+  }));
+
+  const commentItems: TimelineItem[] = (incident.comments || []).map((c) => ({
+    id: c.id,
+    type: 'comment',
+    timestamp: c.createdAt,
+    author: c.author,
+    content: c.content,
+  }));
+
+  // Ordenar cronologicamente em ordem decrescente (mais recentes primeiro)
+  return [...historyItems, ...commentItems].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
 };
 
 export const calculateDashboardStats = (incidents: Incident[]): DashboardStats => {

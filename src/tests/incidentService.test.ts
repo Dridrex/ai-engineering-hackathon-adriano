@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { initialSeedIncidents } from '../storage/incidentStorage';
-import { createIncident, updateIncidentStatus, calculateDashboardStats, InvalidStatusTransitionError } from '../services/incidentService';
+import {
+  createIncident,
+  updateIncidentStatus,
+  addCommentToIncident,
+  getUnifiedTimeline,
+  calculateDashboardStats,
+  InvalidStatusTransitionError,
+  InvalidCommentError,
+} from '../services/incidentService';
 import { Incident } from '../types/incident';
 
 describe('IncidentService & Business Rules Tests', () => {
@@ -100,11 +108,108 @@ describe('IncidentService & Business Rules Tests', () => {
     expect(list[0].history[0].resolutionNotes).toBe('Servidor primário reiniciado e banco reindexado.');
   });
 
+  // --- COMPONENTES DO CHANGE REQUEST #1 ---
+
+  it('💬 deve ADICIONAR comentário com autor e conteúdo válidos', () => {
+    const incident: Incident = {
+      id: 'inc-comment-test',
+      title: 'Test Incident',
+      description: 'Desc',
+      severity: 'Medium',
+      owner: 'Ana',
+      status: 'Open',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      history: [],
+      comments: [],
+    };
+
+    const updated = addCommentToIncident([incident], 'inc-comment-test', 'Ana', 'Provider contacted.');
+    expect(updated[0].comments?.length).toBe(1);
+    expect(updated[0].comments?.[0].author).toBe('Ana');
+    expect(updated[0].comments?.[0].content).toBe('Provider contacted.');
+  });
+
+  it('🚫 deve REJEITAR comentários com autor ou conteúdo vazios', () => {
+    const incident: Incident = {
+      id: 'inc-comment-test',
+      title: 'Test Incident',
+      description: 'Desc',
+      severity: 'Medium',
+      owner: 'Ana',
+      status: 'Open',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      history: [],
+      comments: [],
+    };
+
+    // Autor vazio
+    expect(() => {
+      addCommentToIncident([incident], 'inc-comment-test', '   ', 'Provider contacted.');
+    }).toThrowError(InvalidCommentError);
+
+    // Conteúdo vazio
+    expect(() => {
+      addCommentToIncident([incident], 'inc-comment-test', 'Ana', '   ');
+    }).toThrowError(InvalidCommentError);
+  });
+
+  it('⏱️ deve GERAR Timeline Unificada ordenada por data/hora cronológica decrescente', () => {
+    const incident: Incident = {
+      id: 'inc-timeline-test',
+      title: 'Test Incident',
+      description: 'Desc',
+      severity: 'Medium',
+      owner: 'Ana',
+      status: 'Open',
+      createdAt: '2026-09-05T10:00:00.000Z',
+      updatedAt: '2026-09-05T11:14:00.000Z',
+      history: [
+        {
+          id: 'h-1',
+          fromStatus: 'Open',
+          toStatus: 'In Progress',
+          timestamp: '2026-09-05T10:31:00.000Z',
+        },
+        {
+          id: 'h-2',
+          fromStatus: 'In Progress',
+          toStatus: 'Resolved',
+          timestamp: '2026-09-05T11:14:00.000Z',
+          resolutionNotes: 'Fix applied.',
+        },
+      ],
+      comments: [
+        {
+          id: 'c-1',
+          author: 'Ana',
+          content: 'Provider contacted.',
+          createdAt: '2026-09-05T10:42:00.000Z',
+        },
+      ],
+    };
+
+    const timeline = getUnifiedTimeline(incident);
+
+    // Timeline deve ter 3 itens: h-2 (11:14), c-1 (10:42), h-1 (10:31)
+    expect(timeline.length).toBe(3);
+    expect(timeline[0].id).toBe('h-2'); // 11:14
+    expect(timeline[0].type).toBe('status_change');
+
+    expect(timeline[1].id).toBe('c-1'); // 10:42
+    expect(timeline[1].type).toBe('comment');
+    expect(timeline[1].author).toBe('Ana');
+    expect(timeline[1].content).toBe('Provider contacted.');
+
+    expect(timeline[2].id).toBe('h-1'); // 10:31
+    expect(timeline[2].type).toBe('status_change');
+  });
+
   it('deve calcular estatísticas do Dashboard corretamente', () => {
     const stats = calculateDashboardStats(initialSeedIncidents);
-    // Ana (Critical Open -> Open), Bruno (High In Progress -> Open), Carla (Medium Resolved -> Resolved)
-    expect(stats.totalOpen).toBe(2); // Open + In Progress
-    expect(stats.criticalPending).toBe(1); // Ana
-    expect(stats.totalResolved).toBe(1); // Carla
+    expect(stats.totalOpen).toBe(2);
+    expect(stats.criticalPending).toBe(1);
+    expect(stats.totalResolved).toBe(1);
   });
 });

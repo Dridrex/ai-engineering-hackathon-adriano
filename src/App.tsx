@@ -13,8 +13,10 @@ import {
 import {
   createIncident,
   updateIncidentStatus,
+  addCommentToIncident,
   calculateDashboardStats,
   InvalidStatusTransitionError,
+  InvalidCommentError,
 } from './services/incidentService';
 import { Header } from './components/Header';
 import { DashboardStats } from './components/DashboardStats';
@@ -72,6 +74,21 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleAddComment = (id: string, author: string, content: string) => {
+    try {
+      const updated = addCommentToIncident(incidents, id, author, content);
+      setIncidents(updated);
+      saveIncidents(updated);
+      setErrorMessage(null);
+    } catch (error) {
+      if (error instanceof InvalidCommentError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('Ocorreu um erro ao adicionar o comentário.');
+      }
+    }
+  };
+
   const handleResetData = () => {
     if (window.confirm('Deseja restaurar os dados iniciais de exemplo (Ana, Bruno e Carla)?')) {
       resetToSeedData();
@@ -122,6 +139,7 @@ export const App: React.FC = () => {
         incident={selectedIncident}
         onClose={() => updateUi({ selectedIncidentId: null })}
         onStatusChange={handleStatusChange}
+        onAddComment={handleAddComment}
       />
 
       <Notification

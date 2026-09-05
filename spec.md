@@ -23,6 +23,8 @@
   1. Title: "Payment API instability", Severity: "Critical", Owner: "Ana", Status: "Open"
   2. Title: "Reconciliation delay", Severity: "High", Owner: "Bruno", Status: "In Progress"
   3. Title: "Incorrect customer notification", Severity: "Medium", Owner: "Carla", Status: "Resolved"
+* **F07 - Registro de Comentários (Change Request #1)**: Permite ao usuário adicionar múltiplos comentários a um incidente a partir da tela de detalhes. Cada comentário possui `author`* e `content`* (ambos obrigatórios) e data/hora de criação `createdAt`. Comentários vazios são rejeitados.
+* **F08 - Timeline Cronológica Unificada (Change Request #1)**: Apresenta a atividade do incidente em uma visão cronológica única combinando alterações de status e comentários em ordem temporal (do mais recente para o mais antigo ou vice-versa).
 
 ### Non-Functional Requirements
 * **NF01 - Token Efficiency**: Módulos desacoplados de alta coesão para edições cirúrgicas sem sobrecarregar o contexto da IA.

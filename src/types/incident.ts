@@ -9,6 +9,28 @@ export interface HistoryEntry {
   resolutionNotes?: string;
 }
 
+export interface Comment {
+  id: string;
+  author: string;
+  content: string;
+  createdAt: string;
+}
+
+export type TimelineEventType = 'status_change' | 'comment';
+
+export interface TimelineItem {
+  id: string;
+  type: TimelineEventType;
+  timestamp: string;
+  // Para status_change:
+  fromStatus?: Status;
+  toStatus?: Status;
+  resolutionNotes?: string;
+  // Para comment:
+  author?: string;
+  content?: string;
+}
+
 export interface Incident {
   id: string;
   title: string;
@@ -19,6 +41,7 @@ export interface Incident {
   createdAt: string;
   updatedAt: string;
   history: HistoryEntry[];
+  comments?: Comment[];
   resolutionNotes?: string;
 }
 

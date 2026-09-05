@@ -52,6 +52,8 @@
 * **F04 - Detalhes e Histórico**: Exibição dos dados do incidente e do histórico acumulado de alterações de status com timestamps.
 * **F05 - Dashboard Resumido**: Métricas em tempo real (Total Abertos, Criticals pendentes, Total Resolvidos).
 * **F06 - Carga Inicial (Seed Data)**: Pré-carregamento dos incidentes de Ana (`Critical`, `Open`), Bruno (`High`, `In Progress`) e Carla (`Medium`, `Resolved`).
+* **F07 - Registro de Comentários (Change Request #1)**: Permite ao usuário adicionar múltiplos comentários a um incidente a partir da tela de detalhes. Cada comentário exige `author` e `content` preenchidos (comentários vazios são rejeitados) e registra o timestamp `createdAt`.
+* **F08 - Timeline Cronológica Unificada (Change Request #1)**: Apresenta a atividade do incidente em uma visão cronológica única combinando alterações de status e comentários em ordem temporal.
 
 ---
 
