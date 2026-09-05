@@ -1,44 +1,56 @@
-# AI Engineering Hackathon — Solução
+# Incident Hub
 
 ## 📌 Sobre o Projeto
-Este repositório contém a solução desenvolvida durante o **AI Engineering Hackathon**.
-Todo o código, configurações e documentação foram gerados a partir de instruções em linguagem natural enviadas para Inteligência Artificial, atendendo rigorosamente à regra de **Natural Language Only**.
+**Incident Hub** é uma aplicação web desenvolvida durante o **AI Engineering Hackathon** para o registro, acompanhamento, filtragem e gestão centralizada de incidentes operacionais.
+
+Todo o código, configurações e documentação foram gerados a partir de instruções em linguagem natural enviadas para Inteligência Artificial, atendendo à regra de **Natural Language Only**.
 
 ---
 
 ## 🚀 Como Executar a Aplicação Localmente
 
 ### Pré-requisitos
-* Node.js (versão LTS recomendada)
-* Git
+* Node.js (v18 ou superior)
+* npm (v9 ou superior)
 
-### 1. Instalação de Dependências
+### Instalação
 ```bash
-# Comandos de instalação de dependências serão detalhados após a definição da stack
+# Instalar as dependências do projeto
 npm install
 ```
 
-### 2. Configuração de Ambiente
-Caso seja necessário criar um arquivo `.env`:
+### Execução
 ```bash
-# Copiar arquivo de exemplo (se aplicável)
-# cp .env.example .env
-```
-
-### 3. Iniciar a Aplicação
-```bash
-# Comando de inicialização local
+# Iniciar o servidor de desenvolvimento
 npm run dev
 ```
+Acesse a aplicação no navegador em `http://localhost:5173`.
 
-### 4. Executar Testes
+### Dados Iniciais (Seed Data)
+A aplicação carrega automaticamente 3 incidentes de exemplo ao ser aberta pela primeira vez:
+1. **Payment API instability** (Severity: `Critical`, Owner: `Ana`, Status: `Open`)
+2. **Reconciliation delay** (Severity: `High`, Owner: `Bruno`, Status: `In Progress`)
+3. **Incorrect customer notification** (Severity: `Medium`, Owner: `Carla`, Status: `Resolved`)
+
+Você pode redefinir ou limpar o armazenamento local a qualquer momento utilizando as ferramentas do navegador ou limpando o `LocalStorage`.
+
+### Testes
 ```bash
-# Comando para rodar os testes automatizados
+# Executar a suíte de testes automatizados (Vitest)
 npm test
 ```
 
 ---
 
-## 📂 Documentação e Evidências
-* [Planejamento da Solução (PLANEJAMENTO.md)](./PLANEJAMENTO.md)
-* [Registro de Uso de IA & Auditoria (REGISTRO_IA.md)](./REGISTRO_IA.md)
+## 🏗️ Arquitetura da Solução
+* **Frontend**: React 18 + TypeScript + Vite.
+* **Estilização**: Vanilla CSS com Design Tokens (Dark Mode nativo, Glassmorphism, Layout Responsivo).
+* **Persistência**: `LocalStorage` via Browser Storage Adapter com Carga Inicial (`Seed Data`).
+* **Testes**: `Vitest` com `happy-dom` para verificação automatizada de regras de negócio.
+* **Validação de Transição**: O serviço `incidentService.ts` garante que incidentes `Critical` em estado `Open` obrigatoriamente passem por `In Progress` antes de serem marcados como `Resolved`.
+
+---
+
+## ⚠️ Limitações Conhecidas
+- A aplicação utiliza `LocalStorage` para persistência no navegador (sem backend externo ou múltiplos tenants).
+- Não possui sistema de autenticação ou controle de acesso de usuários.
