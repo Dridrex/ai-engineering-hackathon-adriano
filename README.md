@@ -7,6 +7,12 @@ Todo o código, configurações e documentação foram gerados a partir de instr
 
 ---
 
+## 🎬 Vídeo Demonstrativo
+* **Assista à demonstração em vídeo (Google Drive)**: [Link para o Vídeo](https://drive.google.com/file/d/1407ZOIhWog_fcC7JzEa5h32FV9AbmiAc/view?usp=sharing)
+* **Aplicação em Produção (Live)**: [https://ai-engineering-hackathon-adriano.vercel.app/](https://ai-engineering-hackathon-adriano.vercel.app/)
+
+---
+
 ## 🚀 Como Executar a Aplicação Localmente
 
 ### Pré-requisitos
