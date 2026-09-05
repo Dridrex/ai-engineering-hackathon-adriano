@@ -11,7 +11,7 @@
 - Testes automatizados executados via `Vitest`.
 
 ### 2. O que não foi entregue?
-- Nenhuma funcionalidade obrigatória ficou pendente.
+- Todas as funcionalidades exigidas no Challenge Pack foram implementadas e estão funcionando. Não há funcionalidades obrigatórias nem desejáveis pendentes.
 
 ### 3. O que você deliberadamente decidiu não fazer?
 - Autenticação e login (fora de escopo conforme Seção 2 do desafio).
@@ -24,7 +24,7 @@
 3. **Validação Estrita da Regra Critical na Camada de Serviço**: Validador no `incidentService.ts` antes de qualquer mutação de estado para garantir integridade e feedback claro.
 
 ### 5. Qual foi o maior erro produzido pela IA durante o desenvolvimento?
-- A IA implementou a regra de bloqueio de transição `Open → Resolved` para incidentes `Critical` **e** `High`, quando o Challenge Pack (Seção 7) exige esse bloqueio **apenas para `Critical`**. Isso tornava a aplicação mais restritiva do que o solicitado.
+- A IA implementou a regra de bloqueio de transição `Open → Resolved` para incidentes `Critical` **e** `High`, quando o Challenge Pack (Seção 7) exige esse bloqueio **apenas para `Critical`**. A consequência era que incidentes `High` não podiam ser resolvidos diretamente, gerando uma restrição operacional desnecessária para a equipe e tornando a aplicação mais restritiva do que o solicitado.
 
 ### 6. Como você identificou esse erro?
 - Através de um **Relatório de Conformidade** gerado pela IA (análise item a item de cada requisito do Challenge Pack vs implementação atual). O relatório comparou o texto exato da Seção 7 com o código do `incidentService.ts` e identificou que a condição `inc.severity === 'High'` não deveria existir.
@@ -33,10 +33,10 @@
 - Removida a condição `|| inc.severity === 'High'` do `incidentService.ts`. Os testes unitários foram ajustados: o teste de bloqueio para `High` foi substituído por um teste que verifica que `High` **PODE** ir de `Open → Resolved` com descrição. A suíte de testes foi reexecutada com 100% de aprovação e o build de produção compilou sem erros.
 
 ### 8. Houve alguma regressão?
-- Sim, a regra de negócio para `High` era mais restritiva que o necessário (bloqueava `Open → Resolved` para `High`, o que não era exigido). Isso foi identificado via auditoria de conformidade e corrigido antes do Code Freeze.
+- Não houve regressão (funcionalidade que funcionava e parou de funcionar após uma mudança). O erro Critical/High era um bug de implementação original — a regra nunca funcionou corretamente para `High`. Após a correção, todos os testes existentes continuaram passando e nenhuma funcionalidade previamente correta foi afetada.
 
 ### 9. Em qual parte houve mais retrabalho?
-- Na configuração inicial da suíte de testes com o ambiente de DOM para o Vitest.
+- Na configuração da suíte de testes e na regra de negócio Critical. A IA configurou o `vite.config.ts` com `environment: 'happy-dom'` mas não incluiu a dependência `happy-dom` no `package.json`, causando falha na primeira execução dos testes. Além disso, a regra de bloqueio Critical/High exigiu retrabalho após a auditoria de conformidade identificar que `High` não deveria ser bloqueado.
 
 ### 10. Cite uma situação em que você rejeitou ou alterou uma abordagem sugerida pela IA.
 - Rejeição da ideia de utilizar um banco de dados externo ou servidor backend separado, optando por um Browser Storage Adapter com Seed Data para evitar qualquer ponto de falha de rede na avaliação.
@@ -50,7 +50,8 @@
 3. Implementar ordenação por severidade e data de atualização.
 
 ### 13. Como você avalia sua estratégia inicial?
-- Extremamente bem-sucedida. O Spec-Driven Development e a separação clara em componentes modulares garantiram um desenvolvimento limpo, sem bugs de tipagem e com testes automatizados aprovados na primeira tentativa.
+- **O que manteria**: O Spec-Driven Development (SDD) e a separação clara em componentes modulares garantiram um desenvolvimento limpo, sem bugs de tipagem e com testes automatizados aprovados na primeira tentativa. A arquitetura LocalStorage com Seed Data também se mostrou uma escolha acertada para reprodutibilidade.
+- **O que mudaria**: Incluiria uma etapa de cross-check sistemático entre o texto exato do Challenge Pack e a implementação de cada regra de negócio antes de considerar a tarefa concluída, para evitar erros interpretativos como o do Critical/High.
 
 ### 14. Aproximadamente quantas interações relevantes com IA foram necessárias?
 - Cerca de 8 interações estruturadas registradas no `AI_LOG.md`, incluindo planejamento, implementação, correção de bugs e auditoria de conformidade.
