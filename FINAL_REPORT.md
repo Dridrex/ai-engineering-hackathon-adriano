@@ -8,7 +8,8 @@
 - Validação estrita da regra de negócio: bloqueio de transição `Open ➔ Resolved` para incidentes `Critical`, exigindo a passagem por `In Progress` e exibindo feedback de erro visual compreensível.
 - Dashboard com visão resumida (Total de Abertos, Criticals pendentes e Resolvidos).
 - Persistência em `LocalStorage` com carga automática dos 3 incidentes iniciais obrigatórios (Ana, Bruno, Carla).
-- Testes automatizados executados via `Vitest`.
+- **Change Request #1**: Módulo de comentários em incidentes (autor e conteúdo obrigatórios) e **Timeline Cronológica Unificada** (integrando alterações de status e comentários em sequência temporal).
+- Testes automatizados executados via `Vitest` (10/10 testes unitários aprovados).
 
 ### 2. O que não foi entregue?
 - Todas as funcionalidades exigidas no Challenge Pack foram implementadas e estão funcionando. Não há funcionalidades obrigatórias nem desejáveis pendentes.
@@ -54,7 +55,7 @@
 - **O que mudaria**: Incluiria uma etapa de cross-check sistemático entre o texto exato do Challenge Pack e a implementação de cada regra de negócio antes de considerar a tarefa concluída, para evitar erros interpretativos como o do Critical/High.
 
 ### 14. Aproximadamente quantas interações relevantes com IA foram necessárias?
-- Cerca de 8 interações estruturadas registradas no `AI_LOG.md`, incluindo planejamento, implementação, correção de bugs e auditoria de conformidade.
+- Cerca de 10 interações estruturadas registradas no `REGISTRO_IA.md`, incluindo planejamento, especificação SDD, implementação da v1, correção de regras de negócio, deploy na Vercel e atendimento ao Change Request #1.
 
 ### 15. Quais ferramentas de IA foram utilizadas?
 - Antigravity AI Agent (Gemini 3.6 Flash / Antigravity IDE). Não foi necessário trocar de ferramenta durante o desafio.
