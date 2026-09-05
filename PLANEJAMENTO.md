@@ -18,7 +18,19 @@
 - [ ] Checkpoint 4: Testes, validação e refinamentos.
 - [ ] Checkpoint 5: Code freeze, documentação final e gravação do vídeo.
 
-## 5. Critérios de Aceite & Validação
+## 5. Critérios de Aceite
 - Aplicação rodando localmente sem erros.
 - Documentação clara e completa no `README.md`.
 - Cobertura de testes dos fluxos principais.
+
+## 6. Estratégia de Desenvolvimento
+- Desenvolvimento iterativo guiado por checkpoints com commits frequentes.
+- Foco inicial em entregar o fluxo principal funcional (Correção -> Completude -> Simplicidade).
+
+## 7. Estratégia de Testes e Validação
+- Validação contínua a cada funcionalidade implementada.
+- Testes automatizados para funções críticas e validação manual de UI/fluxos de usuário.
+
+## 8. Estratégia de Utilização da IA
+- **Natural Language Only**: 100% do código, refatorações e correções gerados via IA.
+- Registro contínuo de prompts estratégicos, decisões de arquitetura e correções em `REGISTRO_IA.md`.
