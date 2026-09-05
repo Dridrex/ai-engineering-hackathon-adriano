@@ -2,6 +2,8 @@
 
 Este documento registra as principais interações, prompts estratégicos e decisões de engenharia guiadas por IA durante o desenvolvimento da solução.
 
+* **Repositório GitHub**: https://github.com/Dridrex/ai-engineering-hackathon-adriano
+
 ---
 
 ## Registro de Interações Relevantes
@@ -14,5 +16,6 @@ Este documento registra as principais interações, prompts estratégicos e deci
   - Leitura detalhada das regras do Hackathon.
   - Criação do plano de execução do primeiro commit.
   - Inicialização do repositório Git e criação dos arquivos `.gitignore`, `README.md`, `PLANEJAMENTO.md` e `REGISTRO_IA.md`.
-* **Validação**: Verificação dos arquivos criados e execução do commit inicial (`chore: initial repository setup with documentation templates`).
+  - Conexão com o repositório remoto `https://github.com/Dridrex/ai-engineering-hackathon-adriano`.
+* **Validação**: Verificação dos arquivos criados e execução do commit inicial.
 * **Próxima decisão**: Aguardar a liberação do tema/desafio às 08:00 para preencher o plano de arquitetura e iniciar a codificação do produto.
