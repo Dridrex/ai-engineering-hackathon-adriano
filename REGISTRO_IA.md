@@ -100,4 +100,19 @@ Este documento registra as principais interações, prompts estratégicos e deci
   - `npx.cmd tsc --noEmit`: 0 erros de tipagem.
   - `npx.cmd vitest run`: 6/6 testes aprovados (100% sucesso).
   - `npm.cmd run build`: Compilação de produção concluída em `7.08s`.
-* **Próxima decisão**: Apresentar a funcionalidade para testes do usuário.
+* **Próxima decisão**: Realizar o deploy de produção com custo zero e zero consumo de créditos.
+
+### 🔹 Interação 9: Deploy de Produção Gratuito e Auditoria Final
+* **Objetivo**: Configurar o deploy automatizado via código para Vercel (`vercel.json`), mantendo total conformidade com a regra de Natural Language Only e custo zero.
+* **Contexto fornecido**: Solicitação do usuário para realizar o deploy usando ferramentas gratuitas com menor custo possível de créditos.
+* **Instrução / Prompt**: "agora vamos ao deploy utilizando free tools e gastando o minimo possivel de creditos"
+* **Resultado**:
+  - Criação do arquivo de infraestrutura como código [`vercel.json`](./vercel.json) configurado para Vercel SPA.
+  - Atualização do [`README.md`](./README.md) com as instruções de deploy Vercel.
+  - Execução dos testes automatizados (`7/7` testes passados no Vitest).
+  - Execução da compilação de produção (`tsc && vite build`) com 100% de sucesso.
+* **Validação (Agente QA)**:
+  - `npx.cmd vitest run`: 7/7 testes aprovados (100% sucesso).
+  - `npm.cmd run build`: Compilação de produção concluída com sucesso.
+  - `https://ai-engineering-hackathon-adriano.vercel.app/`: URL de produção funcional e isolada.
+
