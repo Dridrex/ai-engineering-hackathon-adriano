@@ -32,7 +32,7 @@ A aplicação carrega automaticamente 3 incidentes de exemplo ao ser aberta pela
 2. **Reconciliation delay** (Severity: `High`, Owner: `Bruno`, Status: `In Progress`)
 3. **Incorrect customer notification** (Severity: `Medium`, Owner: `Carla`, Status: `Resolved`)
 
-Você pode redefinir ou limpar o armazenamento local a qualquer momento utilizando as ferramentas do navegador ou limpando o `LocalStorage`.
+Para restaurar os dados de exemplo a qualquer momento, clique no botão **"Resetar Dados"** no cabeçalho da aplicação. Isso apagará todos os dados atuais e recarregará os incidentes de exemplo acima.
 
 ### Testes
 ```bash

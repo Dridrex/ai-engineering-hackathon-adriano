@@ -50,12 +50,13 @@ O objetivo do **Incident Hub** é substituir a comunicação informal e fragment
 ---
 
 ## 5. Critérios de Aceite
-1. Um incidente `Critical` em estado `Open` **NÃO PODE** ser alterado para `Resolved` diretamente, exibindo mensagem de erro clara.
-2. A transição `Open ➔ In Progress ➔ Resolved` para incidente `Critical` funciona corretamente.
-3. Os 3 incidentes iniciais (Ana, Bruno, Carla) carregam automaticamente ao abrir a aplicação.
-4. Filtros por status e severidade atualizam a lista em tempo real.
-5. Histórico de alterações é gravado com data/hora e exibido nos detalhes do incidente.
-6. Aplicação compila sem erros de TypeScript e passa em todos os testes do Vitest.
+1. Um incidente `Critical` em estado `Open` **NÃO PODE** ser alterado para `Resolved` diretamente, exibindo mensagem de erro clara (Seção 7 do Challenge Pack).
+2. Incidentes `High`, `Medium` e `Low` **PODEM** ser alterados de `Open` diretamente para `Resolved` (sem restrição de etapa intermediária).
+3. A transição `Open ➔ In Progress ➔ Resolved` para incidente `Critical` funciona corretamente.
+4. Os 3 incidentes iniciais (Ana, Bruno, Carla) carregam automaticamente ao abrir a aplicação.
+5. Filtros por status e severidade atualizam a lista em tempo real.
+6. Histórico de alterações é gravado com data/hora e exibido nos detalhes do incidente.
+7. Aplicação compila sem erros de TypeScript e passa em todos os testes do Vitest.
 
 ---
 

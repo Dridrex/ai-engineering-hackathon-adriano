@@ -6,6 +6,7 @@ export interface HistoryEntry {
   fromStatus: Status;
   toStatus: Status;
   timestamp: string;
+  resolutionNotes?: string;
 }
 
 export interface Incident {
@@ -18,6 +19,7 @@ export interface Incident {
   createdAt: string;
   updatedAt: string;
   history: HistoryEntry[];
+  resolutionNotes?: string;
 }
 
 export interface DashboardStats {

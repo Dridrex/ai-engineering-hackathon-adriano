@@ -85,4 +85,19 @@ Este documento registra as principais interações, prompts estratégicos e deci
   - `npx.cmd tsc --noEmit`: 0 erros de tipagem.
   - `npx.cmd vitest run`: 6/6 testes automatizados aprovados (100% sucesso).
   - `npm.cmd run build`: Compilação de produção concluída em `1.36s`.
-* **Próxima decisão**: Apresentar os resultados ao usuário para validação no ambiente local.
+* **Próxima decisão**: Implementar o popup de descrição da resolução obrigatória ao marcar um incidente como Resolved.
+
+### 🔹 Interação 8: Popup de Descrição da Resolução (Obrigatoriedade de Justificativa)
+* **Objetivo**: Garantir que, ao clicar no botão `Resolved`, seja exibido um popup/modal ([`ResolutionModal.tsx`](./src/components/ResolutionModal.tsx)) exigindo a descrição detalhada da resolução aplicada, com botões OK e Cancelar.
+* **Contexto fornecido**: Instrução explícita do usuário para proibir o encerramento de um incidente com descrição de resolução vazia.
+* **Instrução / Prompt**: "quando clicado em resolved abra um popup para que o usuario preencha com uma descriçao da resoluçao do problema e a mesma nao pode estar vazia..."
+* **Resultado**:
+  - Criação de [`ResolutionModal.tsx`](./src/components/ResolutionModal.tsx).
+  - Atualização dos tipos em [`src/types/incident.ts`](./src/types/incident.ts) para armazenar `resolutionNotes`.
+  - Validação estrita no [`incidentService.ts`](./src/services/incidentService.ts) impedindo resoluções com descrição vazia.
+  - Exibição da nota de resolução nos detalhes e no histórico de transições do incidente.
+* **Validação (Agente QA)**:
+  - `npx.cmd tsc --noEmit`: 0 erros de tipagem.
+  - `npx.cmd vitest run`: 6/6 testes aprovados (100% sucesso).
+  - `npm.cmd run build`: Compilação de produção concluída em `7.08s`.
+* **Próxima decisão**: Apresentar a funcionalidade para testes do usuário.

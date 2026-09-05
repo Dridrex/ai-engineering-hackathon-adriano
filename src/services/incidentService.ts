@@ -29,16 +29,24 @@ export const createIncident = (
 export const updateIncidentStatus = (
   incidents: Incident[],
   id: string,
-  newStatus: Status
+  newStatus: Status,
+  resolutionNotes?: string
 ): Incident[] => {
   return incidents.map((inc) => {
     if (inc.id !== id) return inc;
     if (inc.status === newStatus) return inc;
 
-    // Regra de Negócio Crítica: Incidentes Critical e High não podem ir de Open direto para Resolved
-    if ((inc.severity === 'Critical' || inc.severity === 'High') && inc.status === 'Open' && newStatus === 'Resolved') {
+    // Regra de Negócio Crítica (Seção 7 do Challenge Pack): Incidentes Critical não podem ir de Open direto para Resolved
+    if (inc.severity === 'Critical' && inc.status === 'Open' && newStatus === 'Resolved') {
       throw new InvalidStatusTransitionError(
-        `Um incidente com severidade ${inc.severity} não pode passar diretamente de Open para Resolved. Altere primeiro para In Progress.`
+        'Um incidente Critical não pode passar diretamente de Open para Resolved. Altere primeiro para In Progress.'
+      );
+    }
+
+    // Regra de Resolução: Transição para Resolved exige descrição obrigatória da resolução
+    if (newStatus === 'Resolved' && (!resolutionNotes || !resolutionNotes.trim())) {
+      throw new InvalidStatusTransitionError(
+        'A descrição da resolução é obrigatória para alterar o status para Resolved.'
       );
     }
 
@@ -48,12 +56,14 @@ export const updateIncidentStatus = (
       fromStatus: inc.status,
       toStatus: newStatus,
       timestamp: now,
+      resolutionNotes: newStatus === 'Resolved' ? resolutionNotes?.trim() : undefined,
     };
 
     return {
       ...inc,
       status: newStatus,
       updatedAt: now,
+      resolutionNotes: newStatus === 'Resolved' ? resolutionNotes?.trim() : inc.resolutionNotes,
       history: [historyEntry, ...inc.history],
     };
   });

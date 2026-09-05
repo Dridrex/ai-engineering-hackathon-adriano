@@ -45,3 +45,27 @@ Este documento registra as interações relevantes de desenvolvimento com ferram
 * **Resultado**: Elaboração do plano de implementação e criação dos documentos oficiais do desafio.
 * **Validação**: Verificação de todos os itens exigidos nas Seções 14 a 20 do Challenge Pack.
 * **Decisão**: Implementar o código do domínio Incident Hub e a regra da severidade Critical.
+
+### 🔹 Interação 6: Implementação do ResolutionModal (Popup de Resolução Obrigatória)
+* **Objetivo**: Impedir que o status seja alterado diretamente para `Resolved` sem preenchimento de descrição.
+* **Contexto**: Requisito de feedback compreensível e tratamento de entradas inválidas (Seção 12).
+* **Instrução**: "quando clicado em resolved abra um popup para que o usuario preencha com uma descriçao da resoluçao do problema e a mesma nao pode estar vazia e coloque um botao de ok/cancelar"
+* **Resultado**: Criação do componente `ResolutionModal.tsx` com validação de campo obrigatório. A transição para `Resolved` agora requer descrição.
+* **Validação**: Teste manual na interface: clicar em "Resolved" abre popup, campo vazio exibe erro, cancelar mantém estado, preenchido + OK altera status.
+* **Decisão**: Adicionar validação também na camada de serviço (`incidentService.ts`) para proteção dupla.
+
+### 🔹 Interação 7: Correção da Regra de Negócio (Critical vs High) — Erro da IA corrigido
+* **Objetivo**: Alinhar a regra de negócio com o Challenge Pack (Seção 7).
+* **Contexto**: A IA havia implementado bloqueio de `Open → Resolved` para **Critical e High**, mas o Challenge Pack exige bloqueio **apenas para Critical**.
+* **Instrução**: Relatório de conformidade identificou o desvio.
+* **Resultado**: Removido `High` da condição de bloqueio em `incidentService.ts`. Testes ajustados para verificar que `High` PODE ir de `Open → Resolved`.
+* **Validação**: Suíte Vitest reexecutada com 100% de aprovação. Build de produção sem erros.
+* **Decisão**: Este foi um erro relevante da IA que precisou ser identificado via auditoria de conformidade e corrigido.
+
+### 🔹 Interação 8: Relatório de Conformidade e Finalização da Documentação
+* **Objetivo**: Gerar relatório detalhado comparando cada requisito do Challenge Pack com a implementação.
+* **Contexto**: Necessidade de garantir 100% de conformidade antes do Code Freeze.
+* **Instrução**: "Gerar o relatório de conformidade primeiro, corrigir tudo que faltar, e depois commitar tudo junto"
+* **Resultado**: Relatório de 74 itens verificados, taxa de 97.3% de conformidade, 2 desvios identificados e corrigidos.
+* **Validação**: Execução de `tsc --noEmit`, `vitest run` e `npm run build` após todas as correções.
+* **Decisão**: Commitar todas as correções e push para o repositório remoto.

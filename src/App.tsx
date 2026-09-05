@@ -57,9 +57,9 @@ export const App: React.FC = () => {
     updateDraft({ isOpen: false, title: '', description: '', severity: 'Medium', owner: '' });
   };
 
-  const handleStatusChange = (id: string, newStatus: Status) => {
+  const handleStatusChange = (id: string, newStatus: Status, resolutionNotes?: string) => {
     try {
-      const updated = updateIncidentStatus(incidents, id, newStatus);
+      const updated = updateIncidentStatus(incidents, id, newStatus, resolutionNotes);
       setIncidents(updated);
       saveIncidents(updated);
       setErrorMessage(null);

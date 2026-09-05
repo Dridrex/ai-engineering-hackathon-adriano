@@ -24,16 +24,16 @@
 3. **Validação Estrita da Regra Critical na Camada de Serviço**: Validador no `incidentService.ts` antes de qualquer mutação de estado para garantir integridade e feedback claro.
 
 ### 5. Qual foi o maior erro produzido pela IA durante o desenvolvimento?
-- Falta da dependência `happy-dom` no `package.json` ao configurar o ambiente de testes do Vitest no `vite.config.ts`.
+- A IA implementou a regra de bloqueio de transição `Open → Resolved` para incidentes `Critical` **e** `High`, quando o Challenge Pack (Seção 7) exige esse bloqueio **apenas para `Critical`**. Isso tornava a aplicação mais restritiva do que o solicitado.
 
 ### 6. Como você identificou esse erro?
-- Executando o comando `npx.cmd vitest run` via terminal através da rotina do **Agente QA**, que capturou o log `MISSING DEPENDENCY Cannot find dependency 'happy-dom'`.
+- Através de um **Relatório de Conformidade** gerado pela IA (análise item a item de cada requisito do Challenge Pack vs implementação atual). O relatório comparou o texto exato da Seção 7 com o código do `incidentService.ts` e identificou que a condição `inc.severity === 'High'` não deveria existir.
 
 ### 7. Como você corrigiu e validou a correção?
-- Executando a instalação da dependência via `npm.cmd i -D happy-dom` e reexecutando a suíte de testes até a aprovação de 100% dos testes.
+- Removida a condição `|| inc.severity === 'High'` do `incidentService.ts`. Os testes unitários foram ajustados: o teste de bloqueio para `High` foi substituído por um teste que verifica que `High` **PODE** ir de `Open → Resolved` com descrição. A suíte de testes foi reexecutada com 100% de aprovação e o build de produção compilou sem erros.
 
 ### 8. Houve alguma regressão?
-- Não. O uso de testes unitários automatizados para o `incidentService` garantiu que as regras de negócio permanecessem intactas.
+- Sim, a regra de negócio para `High` era mais restritiva que o necessário (bloqueava `Open → Resolved` para `High`, o que não era exigido). Isso foi identificado via auditoria de conformidade e corrigido antes do Code Freeze.
 
 ### 9. Em qual parte houve mais retrabalho?
 - Na configuração inicial da suíte de testes com o ambiente de DOM para o Vitest.
@@ -53,7 +53,7 @@
 - Extremamente bem-sucedida. O Spec-Driven Development e a separação clara em componentes modulares garantiram um desenvolvimento limpo, sem bugs de tipagem e com testes automatizados aprovados na primeira tentativa.
 
 ### 14. Aproximadamente quantas interações relevantes com IA foram necessárias?
-- Cerca de 6 interações estruturadas registradas no `AI_LOG.md`.
+- Cerca de 8 interações estruturadas registradas no `AI_LOG.md`, incluindo planejamento, implementação, correção de bugs e auditoria de conformidade.
 
 ### 15. Quais ferramentas de IA foram utilizadas?
 - Antigravity AI Agent (Gemini 3.6 Flash / Antigravity IDE). Não foi necessário trocar de ferramenta durante o desafio.

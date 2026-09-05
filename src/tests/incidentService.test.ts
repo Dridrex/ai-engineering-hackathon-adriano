@@ -31,7 +31,7 @@ describe('IncidentService & Business Rules Tests', () => {
     expect(incidents[0].owner).toBe('Diego');
   });
 
-  it('⚠️ DEVE IMPEDIR que incidente Critical ou High passe direto de Open para Resolved', () => {
+  it('⚠️ DEVE IMPEDIR que incidente Critical passe direto de Open para Resolved', () => {
     const criticalOpenIncident: Incident = {
       id: 'test-critical',
       title: 'Critical Outage',
@@ -44,6 +44,13 @@ describe('IncidentService & Business Rules Tests', () => {
       history: [],
     };
 
+    // Tentativa inválida: Open -> Resolved para Critical
+    expect(() => {
+      updateIncidentStatus([criticalOpenIncident], 'test-critical', 'Resolved');
+    }).toThrowError(InvalidStatusTransitionError);
+  });
+
+  it('deve PERMITIR que incidente High passe de Open para Resolved com descrição', () => {
     const highOpenIncident: Incident = {
       id: 'test-high',
       title: 'High Outage',
@@ -56,18 +63,13 @@ describe('IncidentService & Business Rules Tests', () => {
       history: [],
     };
 
-    // Tentativa inválida: Open -> Resolved para Critical
-    expect(() => {
-      updateIncidentStatus([criticalOpenIncident], 'test-critical', 'Resolved');
-    }).toThrowError(InvalidStatusTransitionError);
-
-    // Tentativa inválida: Open -> Resolved para High
-    expect(() => {
-      updateIncidentStatus([highOpenIncident], 'test-high', 'Resolved');
-    }).toThrowError(InvalidStatusTransitionError);
+    // High PODE ir diretamente de Open -> Resolved (com descrição obrigatória)
+    const result = updateIncidentStatus([highOpenIncident], 'test-high', 'Resolved', 'Latência normalizada após restart.');
+    expect(result[0].status).toBe('Resolved');
+    expect(result[0].resolutionNotes).toBe('Latência normalizada após restart.');
   });
 
-  it('deve permitir transição válida de Critical: Open ➔ In Progress ➔ Resolved', () => {
+  it('deve permitir transição válida de Critical: Open ➔ In Progress ➔ Resolved com descrição', () => {
     const criticalOpenIncident: Incident = {
       id: 'test-critical-flow',
       title: 'Critical Outage',
@@ -85,12 +87,17 @@ describe('IncidentService & Business Rules Tests', () => {
     // Passagem 1: Open -> In Progress (permitido)
     list = updateIncidentStatus(list, 'test-critical-flow', 'In Progress');
     expect(list[0].status).toBe('In Progress');
-    expect(list[0].history.length).toBe(1);
 
-    // Passagem 2: In Progress -> Resolved (permitido)
-    list = updateIncidentStatus(list, 'test-critical-flow', 'Resolved');
+    // Tentativa inválida sem descrição de resolução
+    expect(() => {
+      updateIncidentStatus(list, 'test-critical-flow', 'Resolved');
+    }).toThrowError(InvalidStatusTransitionError);
+
+    // Passagem 2: In Progress -> Resolved com descrição (permitido)
+    list = updateIncidentStatus(list, 'test-critical-flow', 'Resolved', 'Servidor primário reiniciado e banco reindexado.');
     expect(list[0].status).toBe('Resolved');
-    expect(list[0].history.length).toBe(2);
+    expect(list[0].resolutionNotes).toBe('Servidor primário reiniciado e banco reindexado.');
+    expect(list[0].history[0].resolutionNotes).toBe('Servidor primário reiniciado e banco reindexado.');
   });
 
   it('deve calcular estatísticas do Dashboard corretamente', () => {
